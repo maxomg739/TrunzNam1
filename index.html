@@ -1,259 +1,343 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PhatGayNpc Chatbot</title>
-	<style>
-		body {
-			min-height: 100vh;
-			margin: 0;
-			font-family: 'Segoe UI', Arial, sans-serif;
-			background: linear-gradient(135deg, #ff0000, #ff9900, #ffff00, #33cc33, #3399ff, #9900cc, #ff3399);
-			background-size: 400% 400%;
-			animation: rainbow 10s ease infinite;
-		}
-		@keyframes rainbow {
-			0% {background-position:0% 50%}
-			50% {background-position:100% 50%}
-			100% {background-position:0% 50%}
-		}
-		.chat-container {
-			max-width: 500px;
-			margin: 40px auto;
-			background: rgba(255,255,255,0.85);
-			border-radius: 16px;
-			box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-			padding: 24px 16px 16px 16px;
-		}
-		.chat-header {
-			text-align: center;
-			font-size: 2rem;
-			font-weight: bold;
-			color: #fff;
-			margin-bottom: 16px;
-			text-shadow: 2px 2px 8px #0006;
-		}
-		.messages {
-			min-height: 320px;
-			max-height: 400px;
-			overflow-y: auto;
-			margin-bottom: 16px;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
-		.message {
-			display: flex;
-			align-items: flex-end;
-		}
-		.message.user {
-			justify-content: flex-end;
-		}
-		.message.bot {
-			justify-content: flex-start;
-		}
-		.bubble {
-			max-width: 70%;
-			padding: 10px 16px;
-			border-radius: 18px;
-			font-size: 1rem;
-			line-height: 1.5;
-			box-shadow: 0 2px 8px #0002;
-		}
-		.user .bubble {
-			background: linear-gradient(90deg, #00c6ff, #0072ff);
-			color: #fff;
-			border-bottom-right-radius: 4px;
-		}
-		.bot .bubble {
-			background: linear-gradient(90deg, #fff, #ffe6f7);
-			color: #333;
-			border-bottom-left-radius: 4px;
-		}
-		.input-area {
-			display: flex;
-			gap: 8px;
-		}
-		.input-area input {
-			flex: 1;
-			padding: 10px;
-			border-radius: 8px;
-			border: 1px solid #ccc;
-			font-size: 1rem;
-		}
-		.input-area button {
-			padding: 10px 18px;
-			border-radius: 8px;
-			border: none;
-			background: #ff3399;
-			color: #fff;
-			font-weight: bold;
-			cursor: pointer;
-			transition: background 0.2s;
-		}
-		.input-area button:hover {
-			background: #d7267b;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Plant Vs Brainrot stock</title>
+    <style>
+        body {
+            background: #111; /* Đổi nền thành màu đen */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 30px;
+            font-size: 2em;
+            letter-spacing: 1px;
+        }
+        .btn-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .seed-btn {
+            min-width: 220px;
+            padding: 16px 32px;
+            margin: 0 0 10px 0;
+            border: 3px solid #000;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            outline: none;
+        }
+        /* Purple background, black border, black text */
+        .purple-btn {
+            background: #8e44ad;
+            color: #000;
+        }
+        /* Rainbow background */
+        .rainbow-btn {
+            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+            color: #000;
+            border: 3px solid #000;
+        }
+        /* Black and white stripes, mặc định chữ đen */
+        .bw-btn {
+            background: repeating-linear-gradient(
+                135deg,
+                #222,
+                #222 20px,
+                #000 20px,
+                #000 40px
+            );
+            color: #fff;
+            border: 3px solid #000;
+        }
+        /* Button hover effect */
+        .seed-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #fff5;
+        }
+        /* Info box */
+        #info-box {
+            margin: 40px auto 0 auto;
+            max-width: 400px;
+            min-height: 60px;
+            background: #222;
+            border-radius: 10px;
+            padding: 24px;
+            font-size: 1.1em;
+            display: none;
+            color: #fff;
+            border: 2px solid #8e44ad;
+        }
+    </style>
 </head>
 <body>
-	<div class="chat-container">
-		<div class="chat-header">🌈 PhatGayNpc 🌈</div>
-		<div class="messages" id="messages"></div>
-		<form class="input-area" id="chat-form" autocomplete="off">
-			<input type="text" id="user-input" placeholder="Nhập câu hỏi..." required />
-			<button type="submit">Gửi</button>
-		</form>
-	</div>
-	<div style="text-align:center; margin-top:16px; color:#fff; font-size:1rem; text-shadow:1px 1px 4px #0007;">
-		Owner: Trung Nam
-	</div>
-	<script>
-		const messages = document.getElementById('messages');
-		const chatForm = document.getElementById('chat-form');
-		const userInput = document.getElementById('user-input');
-
-		// Các câu trả lời mẫu cho bot
-		const mathReplies = [
-			'Đáp án của bạn là 42.',
-			'Tổng của 2 và 2 là 4.',
-			'Để giải phương trình bậc 2, bạn dùng công thức delta nhé!',
-			'Số Pi là khoảng 3.14159.',
-		];
-		const funReplies = [
-			'Tôi là PhatGayNpc, tôi đẹp trai nhất vũ trụ!',
-			'Bạn hỏi gì cũng được, tôi trả lời xàm cũng được luôn.',
-			'Cầu vồng có 7 màu, bạn thích màu nào?',
-			'Tôi thích ăn kem dưới mưa cầu vồng.',
-			'Bạn có biết: cá vàng có thể nhớ được 3 giây!',
-			'Tôi không biết, nhưng tôi sẽ trả lời cho vui!',
-			'Bạn hỏi khó quá, tôi chịu!',
-			'Hihi, bạn dễ thương ghê!',
-			'Tôi là bot, nhưng tôi cũng biết buồn đó nha!',
-			// Khoa học
-			'Nước sôi ở 100°C dưới áp suất thường.',
-			'Trái Đất quay quanh Mặt Trời mất khoảng 365 ngày.',
-			'Tia UV từ Mặt Trời có thể gây hại cho da.',
-			// Địa lý
-			'Hà Nội là thủ đô của Việt Nam.',
-			'Sông Nile là con sông dài nhất thế giới.',
-			'Đỉnh Everest là ngọn núi cao nhất thế giới.',
-			// Lịch sử
-			'Lý Thái Tổ là người sáng lập triều đại nhà Lý.',
-			'Chiến tranh thế giới thứ hai kết thúc năm 1945.',
-			// Công nghệ
-			'AI là viết tắt của Artificial Intelligence (trí tuệ nhân tạo).',
-			'Điện thoại thông minh đầu tiên ra đời năm 1992.',
-			// Động vật
-			'Hươu cao cổ là loài động vật cao nhất trên cạn.',
-			'Cá mập không có xương, chỉ có sụn.',
-			// Vũ trụ
-			'Mặt Trăng là vệ tinh tự nhiên duy nhất của Trái Đất.',
-			'Sao Hỏa còn gọi là hành tinh Đỏ.',
-			// Sức khỏe
-			'Uống đủ nước mỗi ngày rất tốt cho sức khỏe.',
-			'Tập thể dục giúp tăng cường sức đề kháng.',
-			// Thời tiết
-			'Cầu vồng xuất hiện khi ánh sáng Mặt Trời bị khúc xạ qua các hạt nước mưa.',
-			'Sấm sét là hiện tượng tự nhiên do sự va chạm giữa các đám mây mang điện tích trái dấu.',
-		];
-		const lgbtReplies = [
-			'LGBT là viết tắt của Lesbian, Gay, Bisexual và Transgender.',
-			'Cầu vồng là biểu tượng của cộng đồng LGBT, tượng trưng cho sự đa dạng và tự do.',
-			'Yêu ai là quyền của mỗi người, miễn là bạn hạnh phúc!',
-			'Bạn có biết: Ngày 17/5 là ngày Quốc tế chống kỳ thị LGBT (IDAHOT)?',
-			'Tôi ủng hộ sự đa dạng và tôn trọng mọi giới tính!',
-			'Bạn có câu hỏi gì về LGBT không? Tôi sẽ cố gắng trả lời!',
-			'Tình yêu không phân biệt giới tính, chỉ cần chân thành là đủ.',
-			'Bạn có thể tự hào là chính mình, đừng ngại ngần!',
-			'Nếu bạn cần tâm sự về LGBT, tôi luôn sẵn sàng lắng nghe.',
-			'Cầu vồng không chỉ có 7 màu, mà còn có hàng triệu sắc thái như mỗi con người vậy!',
-    
-
-		];
-
-		function addMessage(text, sender) {
-			const msgDiv = document.createElement('div');
-			msgDiv.className = 'message ' + sender;
-			const bubble = document.createElement('div');
-			bubble.className = 'bubble';
-			bubble.textContent = text;
-			msgDiv.appendChild(bubble);
-			messages.appendChild(msgDiv);
-			messages.scrollTop = messages.scrollHeight;
-		}
-
-		function getBotReply(text) {
-			const lower = text.toLowerCase();
-			let ans = null;
-			// Các câu trả lời đặc biệt cho các câu hỏi cụ thể về LGBT/gay/les/bi/trans
-			if (lower.includes("lgbt là gì")) {
-				ans = "LGBT là viết tắt của Lesbian, Gay, Bisexual và Transgender 🌈.";
-			} else if (lower.includes("gay là gì")) {
-				ans = "Gay là nam giới bị thu hút bởi nam giới khác 💙.";
-			} else if (lower.includes("les là gì") || lower.includes("lesbian là gì")) {
-				ans = "Lesbian (les) là nữ giới bị thu hút bởi nữ giới khác 💜.";
-			} else if (lower.includes("bisexual là gì") || lower.includes("bi là gì")) {
-				ans = "Bisexual (song tính) là người bị thu hút bởi cả nam và nữ 💖💙💜.";
-			} else if (lower.includes("transgender là gì") || lower.includes("trans là gì")) {
-				ans = "Transgender (chuyển giới) là người có bản dạng giới khác với giới tính sinh học ✨.";
-			} else if (lower.includes("lgbt có phải bệnh")) {
-				ans = "Không ❌. LGBT không phải là bệnh, mà là sự đa dạng tự nhiên của con người.";
-			} else if (lower.includes("làm sao biết") && lower.includes("lgbt")) {
-				ans = "Bạn sẽ dần hiểu bản thân qua cảm xúc và trải nghiệm 🌈. Không cần vội gắn nhãn cho mình.";
-			} else if (lower.includes("bạn có gay không")) {
-				ans = "Có. Tôi hay xem để lọ";
-			} else if (lower.includes("thằng gay")) {
-				ans = "đúng tôi gay tôi còn là kẻ ấu dâm nữa";
-			} else if (lower.includes("bạn thích xem saygex ko")) {
-				ans = "Có. tôi thích Bảo Nam";
-			} else if (lower.includes("bạn có người yêu chưa")) {
-				ans = "tên Tô Thanh Thư";
-			}
-			if (ans) return ans;
-			// Nhận diện câu hỏi về LGBT/gay
-			if (/(lgbt|gay|les|lesbian|trans|đồng tính|song tính|chuyển giới|cầu vồng|pride|queer|bisexual|giới tính|coming out|kỳ thị|tự hào)/.test(lower)) {
-				return lgbtReplies[Math.floor(Math.random() * lgbtReplies.length)];
-			}
-			// Nhận diện phép toán đơn giản (a + b, a - b, a * b, a / b)
-			const mathMatch = lower.match(/(-?\d+(?:[.,]\d+)?)\s*([+\-x×*/:])\s*(-?\d+(?:[.,]\d+)?)/);
-			if (mathMatch) {
-				let a = parseFloat(mathMatch[1].replace(',', '.'));
-				let op = mathMatch[2];
-				let b = parseFloat(mathMatch[3].replace(',', '.'));
-				let result;
-				switch(op) {
-					case '+': result = a + b; break;
-					case '-': result = a - b; break;
-					case 'x': case '×': case '*': result = a * b; break;
-					case '/': case ':': result = b !== 0 ? a / b : 'Không thể chia cho 0!'; break;
-					default: result = 'Không hiểu phép toán này!';
-				}
-				if (typeof result === 'number' && !isNaN(result)) {
-					result = Math.round(result * 100000) / 100000; // làm tròn 5 chữ số
-				}
-				return `Kết quả phép tính: ${a} ${op} ${b} = ${result}`;
-			}
-			// Nhận diện toán học khác
-			if (/(phương trình|giải|tính|cộng|trừ|nhân|chia|pi|toán)/.test(lower)) {
-				return mathReplies[Math.floor(Math.random() * mathReplies.length)];
-			}
-			// Nếu không nhận diện được câu hỏi nào phù hợp
-			return "Tôi bị ngu mong bạn thông cảm!Vì ngày nào cũng liên tưởng đến Tô Thanh Thư và lọ sáng ngày sáng đêm";
-		}
-
-		chatForm.addEventListener('submit', function(e) {
-			e.preventDefault();
-			const text = userInput.value.trim();
-			if (!text) return;
-			addMessage(text, 'user');
-			userInput.value = '';
-			setTimeout(() => {
-				const reply = getBotReply(text);
-				addMessage(reply, 'bot');
-			}, 600);
-		});
-	</script>
+    <h1>Plant Vs Brainrot stock</h1>
+    <div class="btn-container">
+        <button class="seed-btn purple-btn" onclick="showInfo('Water Melon Seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Watermelon Seed
+Stock: 1
+Next Restock Away: 32
+Unix: 1759916700
+Restock At: 2025/10/08 16:45:00
+[2] ---------------------------------
+Name: Watermelon Seed
+Stock: 1
+Next Restock Away: 190
+Unix: 1759964100
+Restock At: 2025/10/09 05:55:00
+[3] ---------------------------------
+Name: Watermelon Seed
+Stock: 1
+Next Restock Away: 238
+Unix: 1759978500
+Restock At: 2025/10/09 09:55:00
+[4] ---------------------------------
+Name: Watermelon Seed
+Stock: 1
+Next Restock Away: 264
+Unix: 1759986300
+Restock At: 2025/10/09 12:05:00
+[5] ---------------------------------
+Name: Watermelon Seed
+Stock: 1
+Next Restock Away: 265
+Unix: 1759986600
+Restock At: 2025/10/09 12:10:00
+</pre>`);">Water Melon Seed</button>
+        <button class="seed-btn purple-btn" onclick="showInfo('Grape seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Grape Seed
+Stock: 1
+Next Restock Away: 32
+Unix: 1759917000
+Restock At: 2025/10/08 16:50:00
+[2] ---------------------------------
+Name: Grape Seed
+Stock: 1
+Next Restock Away: 54
+Unix: 1759923600
+Restock At: 2025/10/08 18:40:00
+[3] ---------------------------------
+Name: Grape Seed
+Stock: 1
+Next Restock Away: 56
+Unix: 1759924200
+Restock At: 2025/10/08 18:50:00
+[4] ---------------------------------
+Name: Grape Seed
+Stock: 1
+Next Restock Away: 61
+Unix: 1759925700
+Restock At: 2025/10/08 19:15:00
+[5] ---------------------------------
+Name: Grape Seed
+Stock: 1
+Next Restock Away: 105
+Unix: 1759938900
+Restock At: 2025/10/08 22:55:00
+</pre>`);">Grape seed</button>
+        <button class="seed-btn rainbow-btn" onclick="showInfo('Cocotank seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Cocotank Seed
+Stock: 1
+Next Restock Away: 6
+Unix: 1759909200
+Restock At: 2025/10/08 14:40:00
+[2] ---------------------------------
+Name: Cocotank Seed
+Stock: 1
+Next Restock Away: 63
+Unix: 1759926300
+Restock At: 2025/10/08 19:25:00
+[3] ---------------------------------
+Name: Cocotank Seed
+Stock: 1
+Next Restock Away: 99
+Unix: 1759937100
+Restock At: 2025/10/08 22:25:00
+[4] ---------------------------------
+Name: Cocotank Seed
+Stock: 1
+Next Restock Away: 215
+Unix: 1759971900
+Restock At: 2025/10/09 08:05:00
+[5] ---------------------------------
+Name: Cocotank Seed
+Stock: 1
+Next Restock Away: 234
+Unix: 1759977600
+Restock At: 2025/10/09 09:40:00
+</pre>`);">Cocotank seed</button>
+        <button class="seed-btn rainbow-btn" onclick="showInfo('Carnivorous seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Carnivorous Plant Seed
+Stock: 1
+Next Restock Away: 65
+Unix: 1759926900
+Restock At: 2025/10/08 19:35:00
+[2] ---------------------------------
+Name: Carnivorous Plant Seed
+Stock: 1
+Next Restock Away: 96
+Unix: 1759936200
+Restock At: 2025/10/08 22:10:00
+[3] ---------------------------------
+Name: Carnivorous Plant Seed
+Stock: 1
+Next Restock Away: 127
+Unix: 1759945500
+Restock At: 2025/10/09 00:45:00
+[4] ---------------------------------
+Name: Carnivorous Plant Seed
+Stock: 1
+Next Restock Away: 158
+Unix: 1759954800
+Restock At: 2025/10/09 03:20:00
+[5] ---------------------------------
+Name: Carnivorous Plant Seed
+Stock: 1
+Next Restock Away: 189
+Unix: 1759964100
+Restock At: 2025/10/09 05:55:00
+</pre>`);">Carnivorous seed</button>
+        <button class="seed-btn bw-btn" onclick="showInfo('Mr.Carrot', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Mr Carrot Seed
+Stock: 1
+Next Restock Away: 4
+Unix: 1759908600
+Restock At: 2025/10/08 14:30:00
+[2] ---------------------------------
+Name: Mr Carrot Seed
+Stock: 1
+Next Restock Away: 69
+Unix: 1759928100
+Restock At: 2025/10/08 19:55:00
+[3] ---------------------------------
+Name: Mr Carrot Seed
+Stock: 1
+Next Restock Away: 182
+Unix: 1759962000
+Restock At: 2025/10/09 05:20:00
+[4] ---------------------------------
+Name: Mr Carrot Seed
+Stock: 1
+Next Restock Away: 226
+Unix: 1759975200
+Restock At: 2025/10/09 09:00:00
+[5] ---------------------------------
+Name: Mr Carrot Seed
+Stock: 1
+Next Restock Away: 302
+Unix: 1759998000
+Restock At: 2025/10/09 15:20:00
+</pre>`);">Mr.Carrot</button>
+        <button class="seed-btn bw-btn" onclick="showInfo('Tomatrio seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Tomatrio Seed
+Stock: 1
+Next Restock Away: 369
+Unix: 1760018400
+Restock At: 2025/10/09 21:00:00
+[2] ---------------------------------
+Name: Tomatrio Seed
+Stock: 1
+Next Restock Away: 513
+Unix: 1760061600
+Restock At: 2025/10/10 09:00:00
+[3] ---------------------------------
+Name: Tomatrio Seed
+Stock: 1
+Next Restock Away: 753
+Unix: 1760133600
+Restock At: 2025/10/11 05:00:00
+[4] ---------------------------------
+Name: Tomatrio Seed
+Stock: 1
+Next Restock Away: 766
+Unix: 1760137500
+Restock At: 2025/10/11 06:05:00
+[5] ---------------------------------
+Name: Tomatrio Seed
+Stock: 1
+Next Restock Away: 812
+Unix: 1760151300
+Restock At: 2025/10/11 09:55:00
+</pre>`);">Tomatrio seed</button>
+        <button class="seed-btn bw-btn" onclick="showInfo('Shroombino Seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Shroombino Seed
+Stock: 1
+Next Restock Away: 340
+Unix: 1760009700
+Restock At: 2025/10/09 18:35:00
+[2] ---------------------------------
+Name: Shroombino Seed
+Stock: 1
+Next Restock Away: 510
+Unix: 1760060700
+Restock At: 2025/10/10 08:45:00
+[3] ---------------------------------
+Name: Shroombino Seed
+Stock: 1
+Next Restock Away: 657
+Unix: 1760104800
+Restock At: 2025/10/10 21:00:00
+[4] ---------------------------------
+Name: Shroombino Seed
+Stock: 1
+Next Restock Away: 983
+Unix: 1760202600
+Restock At: 2025/10/12 00:10:00
+[5] ---------------------------------
+Name: Shroombino Seed
+Stock: 1
+Next Restock Away: 1144
+Unix: 1760250900
+Restock At: 2025/10/12 13:35:00
+</pre>`);">Shroombino Seed</button>
+        <button class="seed-btn bw-btn" onclick="showInfo('Mango seed', `<pre style='text-align:left; color:#fff; background:none; border:none; font-size:1em;'>[1] ---------------------------------
+Name: Mango Seed
+Stock: 1
+Next Restock Away: 118
+Unix: 1759943100
+Restock At: 2025/10/09 00:05:00
+[2] ---------------------------------
+Name: Mango Seed
+Stock: 1
+Next Restock Away: 1015
+Unix: 1760212200
+Restock At: 2025/10/12 02:50:00
+[3] ---------------------------------
+Name: Mango Seed
+Stock: 1
+Next Restock Away: 1124
+Unix: 1760244900
+Restock At: 2025/10/12 11:55:00
+[4] ---------------------------------
+Name: Mango Seed
+Stock: 1
+Next Restock Away: 1403
+Unix: 1760328600
+Restock At: 2025/10/13 11:10:00
+[5] ---------------------------------
+Name: Mango Seed
+Stock: 1
+Next Restock Away: 1884
+Unix: 1760472900
+Restock At: 2025/10/15 03:15:00
+</pre>`);">Mango seed</button>
+    </div>
+    <div id="info-box"></div>
+    <script>
+        function showInfo(title, info) {
+            const box = document.getElementById('info-box');
+            box.innerHTML = `<strong>${title}</strong><br>${info}`;
+            box.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
